@@ -1,0 +1,21 @@
+---
+- name: Create script for launching the Python interactive terminal
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/python-interactive"
+    dest: /usr/bin/python-interactive
+    owner: root
+    group: root
+    mode: '0755'    
+
+- name: Create init script for Python interactive shell
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/python-init.py"
+    dest: /usr/bin/python-init.py
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set interactive shell
+  user:
+    name: "{{ vm_standard_user }}"
+    shell: /usr/bin/python-interactive

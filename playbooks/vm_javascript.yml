@@ -1,0 +1,13 @@
+- name: JavaScript VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: javascript
+  roles:
+    - vm_base
+
+- name: JavaScript VM setup
+  hosts: javascript.local
+  roles:
+    - vm_user
+    - javascript

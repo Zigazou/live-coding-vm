@@ -1,0 +1,13 @@
+- name: Python2 VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: python2
+  roles:
+    - vm_base
+
+- name: Python2 VM setup
+  hosts: python2.local
+  roles:
+    - vm_user
+    - python2

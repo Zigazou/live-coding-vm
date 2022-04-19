@@ -1,0 +1,13 @@
+- name: PHP8 VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: php8
+  roles:
+    - vm_base
+
+- name: PHP8 VM setup
+  hosts: php8.local
+  roles:
+    - vm_user
+    - php8

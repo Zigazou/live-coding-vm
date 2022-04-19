@@ -1,0 +1,37 @@
+---
+- name: Packages required
+  package:
+    name:
+      - ghc
+      - libghc-text-icu-dev
+      - libghc-formatting-dev
+  become: yes
+
+- name: Create script for launching the Haskell interactive terminal
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/haskell-interactive"
+    dest: /usr/bin/haskell-interactive
+    owner: root
+    group: root
+    mode: '0755'    
+
+- name: Creates .ghc directory
+  file:
+    path: /home/{{ vm_standard_user }}/.ghc
+    state: directory
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0755'
+
+- name: Create starting script for the Haskell interactive shell
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/ghci.conf"
+    dest: /home/{{ vm_standard_user }}/.ghc/ghci.conf
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'    
+
+- name: Set interactive shell
+  user:
+    name: "{{ vm_standard_user }}"
+    shell: /usr/bin/haskell-interactive

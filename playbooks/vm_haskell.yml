@@ -1,0 +1,13 @@
+- name: Haskell VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: haskell
+  roles:
+    - vm_base
+
+- name: Haskell VM setup
+  hosts: haskell.local
+  roles:
+    - vm_user
+    - haskell

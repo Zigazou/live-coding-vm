@@ -1,0 +1,6 @@
+- name: Configure hypervisor
+  hosts: hypervisor
+  gather_facts: yes
+  become: yes
+  roles:
+    - hypervisor

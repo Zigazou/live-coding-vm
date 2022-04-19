@@ -1,0 +1,6 @@
+#!/bin/bash
+# Set terminal title.
+echo -ne "\033]0;PHP 8\007"
+
+# Run PHP interactive mode with a specific prompt.
+/usr/bin/php -d cli.prompt='PHP8> ' -a

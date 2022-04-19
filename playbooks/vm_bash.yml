@@ -1,0 +1,13 @@
+- name: Bash VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: bash
+  roles:
+    - vm_base
+
+- name: Bash VM setup
+  hosts: bash.local
+  roles:
+    - vm_user
+    - bash

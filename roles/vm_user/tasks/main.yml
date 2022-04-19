@@ -1,0 +1,43 @@
+---
+- name: Disable banner when connecting with SSH
+  ansible.builtin.copy:
+    content: "Banner none"
+    dest: /etc/ssh/sshd_config.d/no-banner
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Disable 10-uname
+  ansible.builtin.file:
+    path: /etc/update-motd.d/10-uname
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Disable 92-unattend-upgrades
+  ansible.builtin.file:
+    path: /etc/update-motd.d/92-unattended-upgrades
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add user {{ vm_standard_user }}
+  user:
+    name: "{{ vm_standard_user }}"
+    shell: /bin/bash
+    comment: "Live coding"
+    expires: -1
+
+- name: Disable last login message
+  ansible.builtin.file:
+    state: touch
+    path: /home/{{ vm_standard_user }}/.hushlogin
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Set authorized key for {{ vm_standard_user }}
+  ansible.posix.authorized_key:
+    user: "{{ vm_standard_user }}"
+    state: present
+    key: "{{ lookup('file', ssh_key_public) }}"

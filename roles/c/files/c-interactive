@@ -1,0 +1,10 @@
+#!/bin/bash
+# Set terminal title
+echo -ne "\033]0;C\007"
+
+# Remove any previous temporary file
+rm -f .demo.c.swp demo
+
+# Run the screen command, see ~/.screenrc for configuration and commands it
+# will launch 
+/usr/bin/screen

@@ -1,0 +1,6 @@
+#!/bin/bash
+# Set terminal title.
+echo -ne "\033]0;Python 2.7\007"
+
+# Run the Python REPL with a specific prompt.
+/usr/bin/python2.7 -i /usr/bin/python-init.py

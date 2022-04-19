@@ -1,0 +1,22 @@
+all:
+  vars:
+    local_user: fred
+    ssh_key_public: "/home/{{ local_user }}/.ssh/id_ed25519.pub"
+    ssh_key_private: "/home/{{ local_user }}/.ssh/id_ed25519"
+    vm_standard_user: zigazou
+  children:
+    hypervisor:
+      hosts:
+        localhost:
+    vms:
+      vars:
+        ansible_user: "root"
+      hosts:
+        php7.local:
+        php8.local:
+        python2.local:
+        python3.local:
+        haskell.local:
+        javascript.local:
+        c.local:
+        bash.local:

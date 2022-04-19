@@ -1,0 +1,13 @@
+- name: PHP7 VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: php7
+  roles:
+    - vm_base
+
+- name: PHP7 VM setup
+  hosts: php7.local
+  roles:
+    - vm_user
+    - php7

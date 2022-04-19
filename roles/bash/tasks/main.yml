@@ -1,0 +1,23 @@
+---
+- name: Install PHP
+  package:
+    name:
+      - php7.4-cli
+      - php7.4-readline
+  become: yes
+
+- name: Customize .bashrc
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/bashrc"
+    dest: /home/{{ vm_standard_user }}/.bashrc
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Inject false Bash history
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/bash_history"
+    dest: /home/{{ vm_standard_user }}/.bash_history
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'

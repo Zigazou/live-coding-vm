@@ -1,0 +1,26 @@
+startup_message off
+deflogin on
+mousetrack off
+
+# From /etc/screenrc
+bind ^k
+bind ^\
+bind \\ quit
+bind K kill
+bind I login on
+bind O login off
+bind } history
+
+hardstatus off
+termcapinfo xterm*|rxvt*|kterm*|Eterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
+hardstatus string "%h%? users: %u%?"
+termcapinfo ansi|xterm*|linux*|rxvt*|Eterm* OP
+defnonblock 5
+
+# Split the screen, upper part will be the editor part while the lower part
+# will be the compile and run part. Final focus will be in the editor.
+split
+screen -t edit /home/{{ vm_standard_user }}/edit.bash
+focus
+screen -t compile /home/{{ vm_standard_user }}/compile.bash
+focus

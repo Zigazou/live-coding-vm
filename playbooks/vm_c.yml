@@ -1,0 +1,13 @@
+- name: C VM creation
+  become: yes
+  hosts: localhost
+  vars:
+    vm_name: c
+  roles:
+    - vm_base
+
+- name: C VM setup
+  hosts: c.local
+  roles:
+    - vm_user
+    - c

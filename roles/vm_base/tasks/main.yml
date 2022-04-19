@@ -1,0 +1,89 @@
+---
+- name: Get VMs list
+  community.libvirt.virt:
+    command: list_vms
+  register: existing_vms
+  changed_when: no
+
+- name: Create VM if does not exist
+  block:
+  - name: Download base image
+    get_url:
+      url: "{{ base_image_url }}"
+      dest: "/tmp/{{ base_image_name }}"
+
+  - name: Copy image
+    copy:
+      src: "/tmp/{{ base_image_name }}"
+      dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
+      mode: 0660
+    register: copy_results
+
+  - name: Resize image
+    command: |
+      qemu-img resize \
+      "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2" \
+      +{{ vm_disk_size }}
+    when: copy_results is changed
+
+  - name: Configure the image
+    command: |
+      virt-customize \
+      --add {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 \
+      --hostname {{ vm_name }} \
+      --ssh-inject 'root:file:{{ ssh_key_public }}' \
+      --uninstall cloud-init \
+      --uninstall openssh-server \
+      --update \
+      --install openssh-server \
+      --install avahi-daemon \
+      --selinux-relabel
+    when: copy_results is changed
+
+  - name: Define VM
+    community.libvirt.virt:
+      command: define
+      autostart: yes
+      xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
+
+  # End of block
+  when: "vm_name not in existing_vms.list_vms"
+
+- name: Ensure VM is started
+  community.libvirt.virt:
+    name: "{{ vm_name }}"
+    state: running
+  register: vm_start_results
+  until: "vm_start_results is success"
+  retries: 15
+  delay: 2
+
+- name: Ensure VM answers to {{ vm_name }}.local
+  ansible.builtin.wait_for:
+    host: "{{ vm_name }}.local"
+    port: 22
+    connect_timeout: 10
+
+- name: Remove {{ vm_name }}.local from known_hosts
+  command: ssh-keygen -f "/home/fred/.ssh/known_hosts" -R "{{ vm_name }}.local"
+  become: yes
+  become_user: fred
+
+- name: Remove {{ vm_name }}.local from known_hosts
+  command: ssh-keygen -f "/home/fred/.ssh/known_hosts" -R "{{ vm_name }}.local"
+  become: yes
+  become_user: fred
+
+- name: Get {{ vm_name }}.local IP address
+  shell: getent ahosts {{ vm_name }}.local | head -1 | cut -f1 -d" "
+  register: vm_ip_address
+
+- name: Remove {{ vm_name }}.local IP address from known_hosts
+  command: ssh-keygen -f "/home/fred/.ssh/known_hosts" -R "{{ vm_ip_address.stdout }}"
+  become: yes
+  become_user: fred
+
+- name: Add {{ vm_name }}.local to known_hosts
+  command: ssh-keyscan -H "{{ vm_name }}.local" >> "/home/fred/.ssh/known_hosts"
+  become: yes
+  become_user: fred

@@ -1,0 +1,62 @@
+---
+- name: Packages required
+  ansible.builtin.package:
+    name:
+      - gcc
+      - vim
+      - screen
+      - inotify-tools
+  become: yes
+
+- name: Create screenrc file
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/screenrc.j2"
+    dest: /home/{{ vm_standard_user }}/.screenrc
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Create edit.bash script
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/edit.bash"
+    dest: /home/{{ vm_standard_user }}/edit.bash
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0755'
+
+- name: Create compile.bash script
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/compile.bash"
+    dest: /home/{{ vm_standard_user }}/compile.bash
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0755'
+
+- name: Create demo.c file
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/demo.c"
+    dest: /home/{{ vm_standard_user }}/demo.c
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Create c-interactive file
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/c-interactive"
+    dest: /usr/bin/c-interactive
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create vimrc file
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/vimrc"
+    dest: /home/{{ vm_standard_user }}/.vimrc
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Set interactive shell
+  ansible.builtin.user:
+    name: "{{ vm_standard_user }}"
+    shell: /usr/bin/c-interactive

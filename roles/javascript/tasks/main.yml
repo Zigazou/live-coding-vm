@@ -1,0 +1,51 @@
+---
+- name: Install curl for external repository
+  package:
+    name:
+      - curl
+  become: yes
+
+- name: Get NodeJS PPA install script
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/setup_17.x
+    dest: /tmp/setup_17.x
+    mode: '0440'
+
+- name: Install PPA for NodeJS
+  ansible.builtin.command: bash /tmp/setup_17.x
+  become: yes
+
+- name: Packages required for {{ vm_name }}
+  package:
+    name:
+      - nodejs
+  become: yes
+
+- name: Create script for launching the PHP interactive terminal
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/javascript-interactive"
+    dest: /usr/bin/javascript-interactive
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create script for launching the PHP interactive terminal
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/javascript-initrepl.js"
+    dest: /usr/bin/javascript-initrepl.js
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Inject values into the REPL history
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/node_repl_history"
+    dest: "/home/{{ vm_standard_user }}/.node_repl_history"
+    owner: "{{ vm_standard_user }}"
+    group: "{{ vm_standard_user }}"
+    mode: '0644'
+
+- name: Set interactive shell
+  user:
+    name: "{{ vm_standard_user }}"
+    shell: /usr/bin/javascript-interactive

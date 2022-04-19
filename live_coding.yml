@@ -1,0 +1,10 @@
+---
+- import_playbook: playbooks/hypervisor.yml
+- import_playbook: playbooks/vm_bash.yml
+- import_playbook: playbooks/vm_c.yml
+- import_playbook: playbooks/vm_haskell.yml
+- import_playbook: playbooks/vm_javascript.yml
+- import_playbook: playbooks/vm_php7.yml
+- import_playbook: playbooks/vm_php8.yml
+- import_playbook: playbooks/vm_python2.yml
+- import_playbook: playbooks/vm_python3.yml

@@ -1,0 +1,20 @@
+---
+- name: Packages required
+  package:
+    name:
+      - php7.4-cli
+      - php7.4-readline
+  become: yes
+
+- name: Create script for launching the PHP interactive terminal
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/php-interactive"
+    dest: /usr/bin/php-interactive
+    owner: root
+    group: root
+    mode: '0755'    
+
+- name: Set interactive shell
+  user:
+    name: "{{ vm_standard_user }}"
+    shell: /usr/bin/php-interactive
